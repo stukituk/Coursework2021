@@ -1,1 +1,1 @@
-# Coursework2021
+My coursework for the third year on the topic "Algorithms for solving discrete optimization problems" (genetic algorithm, dynamic programming and brute force for solving the knapsack problem (0-1 and unbounded), for choosing cutting options in the "cutting stock problem")
