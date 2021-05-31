@@ -7,9 +7,9 @@ def fit_fun(population, w, num_items, W):
     for chromosomes in population:
         total_value = sum([chromosomes[i] * w[i] for i in range(0, num_items)])
         while (total_value > W):
-            indexes = [i for i, v in enumerate(chromosomes) if v == 1]
+            indexes = [i for i, v in enumerate(chromosomes) if v > 0]
             ind_for_change = random.choices(indexes)[0]
-            chromosomes[ind_for_change] = 0
+            chromosomes[ind_for_change] -= 1
             total_value = sum([chromosomes[i] * w[i] for i in range(num_items)])
         value_population.append(total_value)
         fit_population.append(sum([chromosomes[i] * w[i] for i in range(num_items)]))
@@ -42,22 +42,23 @@ def group_selection(fit_population, generation_size):
         new_population.append(new_chromosome)
     return new_population
 
-def mutation(new_population):
+def mutation(new_population, w):
     for chromosomes in new_population:
         choice = random.choices([0, 1], weights=[0.9, 0.1], k=1)
         if (choice == 1):
+            random_chromosome = random.randint(0, int(W/min(w)))
             ind = random.randint(0, len(chromosomes) - 1)
-            if (chromosomes[ind] == 0):
-                chromosomes[ind] = 1
-            else:
-                chromosomes[ind] = 0
+            while chromosomes[ind] == random_chromosome:
+                random_chromosome = random.randint(0, int(W / min(w)))
+            chromosomes[ind] = random_chromosome
     return new_population
+
 
 import glob
 filenames1 = glob.glob("./tests/test?.txt")
 filenames2 = glob.glob("./tests/test??.txt")
 filenames = filenames1 + filenames2
-file_to_write = open('genetic_amswers.txt', 'w')
+file_to_write = open('genetic_answers.txt', 'w')
 for filename in filenames:
     start_time = time.time()
     f = open(filename)
@@ -69,43 +70,31 @@ for filename in filenames:
         new_line = f.readline().split(' ')
         w.append(int(new_line[0]))
         b.append(int(new_line[1]))
-    w_for_unbounded = []
-    indexses = []
     c2 = []
-    for i in range(0, len(w)):
-        count = int(W / w[i])
-        for j in range(0, count):
-            indexses.append(i)
-            w_for_unbounded.append(w[i])
-    p = [1 for i in range(0, len(w_for_unbounded))]
-    start_num_chromosomes = len(p) * 10
+    p = [1 for i in range(0, len(w))]
     if len(p)>=100:
         num_chromosomes = len(p) * 10
         start_num_chromosomes = len(p) * 10
     else:
-        num_chromosomes = len(p) ** 2
-        start_num_chromosomes = len(p) * 10
-    num_items = len(w_for_unbounded)
+        num_chromosomes = len(p) ** 3
+        start_num_chromosomes = len(p) ** 3
+    num_items = len(w)
     variants = []
-    population = [random.choices([0, 1], k=num_items) for i in range(0, start_num_chromosomes)]
+    population = [random.choices([i for i in range(0, int(W/min(w))+1)], k=num_items) for i in range(0, start_num_chromosomes)]
     while (1):
-        value_population, fit_population = fit_fun(population, w_for_unbounded, num_items, W)
+        value_population, fit_population = fit_fun(population, w, num_items, W)
         flag, max_ind = check_population(value_population, fit_population, num_items)
         if flag:
             variants_from_genetic = population
             break
         else:
             new_population = group_selection(fit_population, num_chromosomes)
-            population = mutation(new_population)
+            population = mutation(new_population, w)
 
     variants = []
     for variant in variants_from_genetic:
-        new_var = [0 for i in range(0, len(w))]
-        for j in range(0, len(variant)):
-            if variant[j] == 1:
-                new_var[indexses[j]] += 1
-        if new_var not in variants:
-            variants.append(new_var)
+        if variant not in variants:
+            variants.append(variant)
 
     sum_of_columns = [sum(row[i] for row in variants) for i in range(len(variants[0]))]
     for i in range(len(sum_of_columns)):
@@ -132,7 +121,7 @@ for filename in filenames:
     file_to_write.write(filename + '\n')
     file_to_write.write('N = ' + str(N - 1) + '\n')
     file_to_write.write('W = ' + str(W) + '\n')
-    file_to_write.write('int(W/min_w) = ' + str(int(W / min(w[1:]))) + '\n')
+    file_to_write.write('int(W/min_w) = ' + str(int(W / min(w))) + '\n')
     file_to_write.write('variants = ' + str(len(final_variants)) + '\n')
     file_to_write.write('optimal variants = ' + str(optimal_variants) + '\n')
     file_to_write.write('time for searching variants = ' + str(end_time - start_time) + '\n')
