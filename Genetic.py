@@ -57,7 +57,7 @@ import glob
 filenames1 = glob.glob("./tests/test?.txt")
 filenames2 = glob.glob("./tests/test??.txt")
 filenames = filenames1 + filenames2
-file_to_write = open('genetic_answers.txt', 'w')
+file_to_write = open('genetic_amswers.txt', 'w')
 for filename in filenames:
     start_time = time.time()
     f = open(filename)
@@ -78,14 +78,16 @@ for filename in filenames:
             indexses.append(i)
             w_for_unbounded.append(w[i])
     p = [1 for i in range(0, len(w_for_unbounded))]
-    start_num_chromosomes = len(p)
+    start_num_chromosomes = len(p) * 10
     if len(p)>=100:
         num_chromosomes = len(p) * 10
+        start_num_chromosomes = len(p) * 10
     else:
         num_chromosomes = len(p) ** 2
+        start_num_chromosomes = len(p) * 10
     num_items = len(w_for_unbounded)
     variants = []
-    population = [random.choices([0, 1], k=num_items) for i in range(0, num_chromosomes)]
+    population = [random.choices([0, 1], k=num_items) for i in range(0, start_num_chromosomes)]
     while (1):
         value_population, fit_population = fit_fun(population, w_for_unbounded, num_items, W)
         flag, max_ind = check_population(value_population, fit_population, num_items)
@@ -113,6 +115,7 @@ for filename in filenames:
             variants.append(new_variant)
 
     final_variants = []
+    optimal_variants = 0
     for variant in variants:
         if variant not in final_variants:
             final_variants.append(variant)
@@ -120,6 +123,8 @@ for filename in filenames:
             for j in range(0, len(variant)):
                 weight += w[j] * variant[j]
             c2.append(W - weight)
+            if (W-weight)<min(w):
+                optimal_variants+=1
 
     end_time = time.time()
     from mip import *
@@ -129,6 +134,7 @@ for filename in filenames:
     file_to_write.write('W = ' + str(W) + '\n')
     file_to_write.write('int(W/min_w) = ' + str(int(W / min(w[1:]))) + '\n')
     file_to_write.write('variants = ' + str(len(final_variants)) + '\n')
+    file_to_write.write('optimal variants = ' + str(optimal_variants) + '\n')
     file_to_write.write('time for searching variants = ' + str(end_time - start_time) + '\n')
     m = Model()
     a = np.array(final_variants).transpose()
