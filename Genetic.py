@@ -20,9 +20,9 @@ def check_population(value_population, fit_population, num_items):
     max_ind = fit_population.index(max_value)
     max_count = fit_population.count(max_value)
     if (max_count >= (0.6 * num_items)):
-        return (True, max_ind)
+        return True
     else:
-        return (False, max_ind)
+        return False
 
 def single_point_crossover(chromosome_x, chromosome_y):
     crossover_ind = random.randint(0, len(chromosome_x) - 1)
@@ -72,18 +72,14 @@ for filename in filenames:
         b.append(int(new_line[1]))
     c2 = []
     p = [1 for i in range(0, len(w))]
-    if len(p)>=100:
-        num_chromosomes = len(p) * 10
-        start_num_chromosomes = len(p) * 10
-    else:
-        num_chromosomes = len(p) ** 3
-        start_num_chromosomes = len(p) ** 3
+    num_chromosomes = N ** 3
+    start_num_chromosomes = N ** 3
     num_items = len(w)
     variants = []
     population = [random.choices([i for i in range(0, int(W/min(w))+1)], k=num_items) for i in range(0, start_num_chromosomes)]
     while (1):
         value_population, fit_population = fit_fun(population, w, num_items, W)
-        flag, max_ind = check_population(value_population, fit_population, num_items)
+        flag = check_population(value_population, fit_population, num_items)
         if flag:
             variants_from_genetic = population
             break
