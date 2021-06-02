@@ -17,7 +17,6 @@ def fit_fun(population, w, num_items, W):
 
 def check_population(value_population, fit_population, num_items):
     max_value = max(fit_population)
-    max_ind = fit_population.index(max_value)
     max_count = fit_population.count(max_value)
     if (max_count >= (0.6 * num_items)):
         return True
