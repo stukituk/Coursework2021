@@ -3,7 +3,6 @@ import random
 random.seed(0)
 def fit_fun(population, w, num_items, W):
     fit_population = []
-    value_population = []
     for chromosomes in population:
         total_value = sum([chromosomes[i] * w[i] for i in range(0, num_items)])
         while (total_value > W):
@@ -11,11 +10,10 @@ def fit_fun(population, w, num_items, W):
             ind_for_change = random.choices(indexes)[0]
             chromosomes[ind_for_change] -= 1
             total_value = sum([chromosomes[i] * w[i] for i in range(num_items)])
-        value_population.append(total_value)
         fit_population.append(sum([chromosomes[i] * w[i] for i in range(num_items)]))
-    return (value_population, fit_population)
+    return fit_population
 
-def check_population(value_population, fit_population, num_items):
+def check_population(fit_population, num_items):
     max_value = max(fit_population)
     max_count = fit_population.count(max_value)
     if (max_count >= (0.6 * num_items)):
@@ -77,8 +75,8 @@ for filename in filenames:
     variants = []
     population = [random.choices([i for i in range(0, int(W/min(w))+1)], k=num_items) for i in range(0, start_num_chromosomes)]
     while (1):
-        value_population, fit_population = fit_fun(population, w, num_items, W)
-        flag = check_population(value_population, fit_population, num_items)
+        fit_population = fit_fun(population, w, num_items, W)
+        flag = check_population(fit_population, num_items)
         if flag:
             variants_from_genetic = population
             break
