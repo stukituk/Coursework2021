@@ -9,6 +9,7 @@ def fit_fun(population, w, num_items, W):
             indexes = [i for i, v in enumerate(chromosomes) if v > 0]
             ind_for_change = random.choices(indexes)[0]
             chromosomes[ind_for_change] -= 1
+            total_value = sum([chromosomes[i] * w[i] for i in range(num_items)])
         fit_population.append(sum([chromosomes[i] * w[i] for i in range(num_items)]))
     return fit_population
 
