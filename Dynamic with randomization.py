@@ -56,7 +56,7 @@ for filename in filenames:
   answers = []
   min_w = min(w[1:N])
 
-  for number in range(0, int(W/min_w)):
+  for number in range(0, int(W/min_w)*N):
     indexses = [i for i in range(1,N)]
     random.shuffle(indexses)
     indexses = [0] + indexses
