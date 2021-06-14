@@ -1,4 +1,6 @@
 import time
+import random
+random.seed(0)
 def dynamic(A, W, N, w, indexses, p, unbounded):
   if unbounded:
     for i in range(0,N):
@@ -53,58 +55,10 @@ for filename in filenames:
   A = [[0 for j in range(W+1)] for i in range(0,N)]
   answers = []
   min_w = min(w[1:N])
-  '''
-  indexses = [i for i in range(0, N)]
-  dynamic(A, W, N, w, indexses, p, unbounded=False)
-  for i in range(1, N):
-    for j in range(min_w, W + 1):
-      answer = []
-      findAns(A, i, j, w, indexses, unbounded=False)
-      answer.sort()
-      if (len(answer) > 0) and (answer not in answers):
-        answers.append(answer)
 
-  A = [[0 for j in range(W + 1)] for i in range(0, N)]
-  dynamic(A, W, N, w, indexses, p, unbounded=True)
-  for i in range(1, N):
-    for j in range(min_w, W + 1):
-      answer = []
-      findAns(A, i, j, w, indexses, unbounded=True)
-      answer.sort()
-      if (len(answer) > 0) and (answer not in answers):
-        answers.append(answer)
-
-  w = w[1:N]
-  w.reverse()
-  w = [0] + w
-  indexses = indexses[1:N]
-  indexses.reverse()
-  indexses = [0] + indexses
-  A = [[0 for j in range(W + 1)] for i in range(0, N)]
-  dynamic(A, W, N, w, indexses, p, unbounded=False)
-  for i in range(1, N):
-    for j in range(min_w, W + 1):
-      answer = []
-      findAns(A, i, j, w, indexses, unbounded=False)
-      answer.sort()
-      if (len(answer) > 0) and (answer not in answers):
-        answers.append(answer)
-
-  A = [[0 for j in range(W + 1)] for i in range(0, N)]
-  dynamic(A, W, N, w, indexses, p, unbounded=True)
-  for i in range(1, N):
-    for j in range(min_w, W + 1):
-      answer = []
-      findAns(A, i, j, w, indexses, unbounded=True)
-      answer.sort()
-      if (len(answer) > 0) and (answer not in answers):
-        answers.append(answer)
-  '''
-
-  from random import shuffle
   for number in range(0, int(W/min_w)):
     indexses = [i for i in range(1,N)]
-    shuffle(indexses)
+    random.shuffle(indexses)
     indexses = [0] + indexses
     dynamic(A, W, N, w, indexses, p, unbounded = False)
     for i in range(1,N):
